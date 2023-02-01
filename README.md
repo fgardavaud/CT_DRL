@@ -22,7 +22,11 @@ In your project root path you need to have one folder named "data" (and put your
 
 # Adaptation to your workstation environment
 
-You have to edit each line which detects Series.description name and adapt it to your own department labelizations.
+You have to edit the following lines in order to run the script :
+
+-   line 94 : edit the name of the .csv file to adapt with your own configuration,
+
+- You have also to edit each line which detects Series.description name and adapt it to your own department labelizations.
 
 # Test environment
 
