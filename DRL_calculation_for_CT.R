@@ -531,7 +531,7 @@ for (CT_dataframe in list_CT_model_data_dataframe_wo_duplicates) {
     ggplot() +
     aes(x = Local.study.description, y = Total.DLP..mGy.cm.) +
     geom_boxplot(shape = "circle", fill = "#D96748") +
-    labs(x = "Descriptions d'examen", y = "PDL total par examen (mGy)", 
+    labs(x = "Descriptions d'examen", y = "PDL total par examen (mGy.cm)", 
          title = paste0("Distribution du PDL total pour 10 examens les plus fréquent du scanner ",scanner_name, " pour l'année ", Study_year)) +
     theme_gray()
   ggsave(path = paste0("output/",Study_year), filename = paste0("Total_DLP_Local_Study_Description_boxplot_",scanner_name,"_in_",Study_year,".png"), width = 16)
@@ -576,7 +576,7 @@ for (CT_dataframe in list_CT_model_data_dataframe_wo_duplicates) {
     ggplot() +
     aes(x = Series.protocol.name, y = Total.DLP..mGy.cm.) +
     geom_boxplot(shape = "circle", fill = "#D96748") +
-    labs(x = "Protocoles", y = "PDL total par examen (mGy)", 
+    labs(x = "Protocoles", y = "PDL total par examen (mGy.cm)", 
          title = paste0("Distribution du PDL total pour les 6 protocoles les plus fréquents du scanner ",scanner_name, " pour l'année ", Study_year)) +
     theme_gray()
   ggsave(path = paste0("output/",Study_year), filename = paste0("Total_DLP_Protocols_boxplot_",scanner_name,"_in_",Study_year,".png"), width = 16)
