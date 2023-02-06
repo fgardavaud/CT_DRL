@@ -512,7 +512,7 @@ for (CT_dataframe in list_CT_model_data_dataframe_wo_duplicates) {
     labs(x = "Descriptions d'examen", y = "Nombre d'actes", 
          title = paste0("Nombre d'examens selon les 10 descriptions cliniques les plus fréquentes du scanner ",scanner_name," pour des patients d'IMC standard pour l'année ", Study_year),
          # caption = "histo_exam"
-         ) +
+    ) +
     theme_gray()
   ggsave(path = paste0("output/",Study_year), filename = paste0("Frequent_Local_Study_Description_histogram_for_",scanner_name,"_in_",Study_year,".png"), width = 16)
   
@@ -557,7 +557,7 @@ for (CT_dataframe in list_CT_model_data_dataframe_wo_duplicates) {
     labs(x = "Protocoles", y = "Nombre d'actes", 
          title = paste0("Nombre d'examens selon les 6 protocoles les plus fréquents du scanner ",scanner_name," pour des patients d'IMC standard pour l'année ", Study_year),
          #caption = "histo_exam"
-         ) +
+    ) +
     theme_gray()
   ggsave(path = paste0("output/",Study_year), filename = paste0("Frequent_Protocols_histogram_for_",scanner_name,"_in_",Study_year,".png"), width = 16)
   
@@ -602,54 +602,113 @@ for (CT_dataframe in list_CT_model_data_dataframe_wo_duplicates) {
     pull(Local.study.description) # a vector of study descriptions is created
   CT_dataframe_description_filtered <- CT_dataframe %>% filter(Local.study.description %in% Frequent_descriptions_list) # filter according to the list of frequent descriptions
   
-
-# get statistics (mean, sd, max, min) round at unit for each frequent exam description
-Local_DRL <- CT_dataframe_description_filtered %>%
-  group_by(Local.study.description) %>%
-  summarise(
-    # stats for Total DLP in mGy.cm
-    mean_Total_DLP_mGy.cm = round(mean(Total.DLP..mGy.cm., na.rm = TRUE),0),
-    med_Total_DLP_mGy.cm = round(median(Total.DLP..mGy.cm., na.rm = TRUE),0),
-    sd_Total_DLP_mGy.cm = round(sd(Total.DLP..mGy.cm., na.rm = TRUE),0),
-    max_Total_DLP_mGy.cm = round(max(Total.DLP..mGy.cm., na.rm = TRUE),0),
-    min_Total_DLP_mGy.cm = round(min(Total.DLP..mGy.cm., na.rm = TRUE),0),
-    # stats for max CTDIvol in mGy
-    mean_max_CTDIvol_mGy = round(mean(Max.CTDIvol..mGy., na.rm = TRUE),0),
-    med_max_CTDIvol_mGy = round(median(Max.CTDIvol..mGy., na.rm = TRUE),0),
-    sd_max_CTDIvol_mGy = round(sd(Max.CTDIvol..mGy., na.rm = TRUE),0),
-    max_max_CTDIvol_mGy = round(max(Max.CTDIvol..mGy., na.rm = TRUE),0),
-    min_max_CTDIvol_mGy = round(min(Max.CTDIvol..mGy., na.rm = TRUE),0),
-    # stats for kV
-    mean_kV = round(mean(KVP..kV., na.rm = TRUE),0),
-    med_kV = round(median(KVP..kV., na.rm = TRUE),0),
-    sd_kV = round(sd(KVP..kV., na.rm = TRUE),0),
-    max_kV = round(max(KVP..kV., na.rm = TRUE),0),
-    min_kV = round(min(KVP..kV., na.rm = TRUE),0),
-    # stats for Pitch
-    mean_Pitch = round(mean(Pitch.factor, na.rm = TRUE),0),
-    med_Pitch = round(median(Pitch.factor, na.rm = TRUE),0),
-    sd_Pitch = round(sd(Pitch.factor, na.rm = TRUE),0),
-    max_Pitch = round(max(Pitch.factor, na.rm = TRUE),0),
-    min_Pitch = round(min(Pitch.factor, na.rm = TRUE),0),
-    # stats for acquisition (only spiral, smartprep & smartstep) number data
-    mean_Acq_Num = round(mean(Num..Series.Non.Localizer, na.rm = TRUE),0),
-    med_Acq_Num  = round(median(Num..Series.Non.Localizer, na.rm = TRUE),0),
-    sd_Acq_Num = round(sd(Num..Series.Non.Localizer, na.rm = TRUE),0),
-    max_Acq_Num = round(max(Num..Series.Non.Localizer, na.rm = TRUE),0),
-    min_Acq_Num = round(min(Num..Series.Non.Localizer, na.rm = TRUE),0),
-    # Exam number
-    Exam_number = n(),
-    # stats for BMI
-    mean_BMI = round(mean(BMI, na.rm = TRUE),0),
-    med_BMI = round(median(BMI, na.rm = TRUE),0),
-    sd_BMI = round(sd(BMI, na.rm = TRUE),0),
-    max_BMI = round(max(BMI, na.rm = TRUE),0),
-    min_BMI = round(min(BMI, na.rm = TRUE),0),
-  )
-write.xlsx(Local_DRL, paste0('output/',Study_year,'/Local_DRL_for_',scanner_name,'_in_',Study_year,'.xlsx'), sheetName = paste0("Local_DRL_",scanner_name),
-           colNames = TRUE, rowNames = FALSE, append = FALSE, overwrite = TRUE) #rowNames = FALSE to suppress the first column with index
-rm(Local_DRL)
-j <- j+1 # to loop on CT units
+  
+  # get statistics (mean, sd, max, min) round at unit for 10 more frequent exam description
+  Local_DRL_study_description <- CT_dataframe_description_filtered %>%
+    group_by(Local.study.description) %>%
+    summarise(
+      # stats for Total DLP in mGy.cm
+      mean_Total_DLP_mGy.cm = round(mean(Total.DLP..mGy.cm., na.rm = TRUE),0),
+      med_Total_DLP_mGy.cm = round(median(Total.DLP..mGy.cm., na.rm = TRUE),0),
+      sd_Total_DLP_mGy.cm = round(sd(Total.DLP..mGy.cm., na.rm = TRUE),0),
+      max_Total_DLP_mGy.cm = round(max(Total.DLP..mGy.cm., na.rm = TRUE),0),
+      min_Total_DLP_mGy.cm = round(min(Total.DLP..mGy.cm., na.rm = TRUE),0),
+      # stats for max CTDIvol in mGy
+      mean_max_CTDIvol_mGy = round(mean(Max.CTDIvol..mGy., na.rm = TRUE),0),
+      med_max_CTDIvol_mGy = round(median(Max.CTDIvol..mGy., na.rm = TRUE),0),
+      sd_max_CTDIvol_mGy = round(sd(Max.CTDIvol..mGy., na.rm = TRUE),0),
+      max_max_CTDIvol_mGy = round(max(Max.CTDIvol..mGy., na.rm = TRUE),0),
+      min_max_CTDIvol_mGy = round(min(Max.CTDIvol..mGy., na.rm = TRUE),0),
+      # stats for kV
+      mean_kV = round(mean(KVP..kV., na.rm = TRUE),0),
+      med_kV = round(median(KVP..kV., na.rm = TRUE),0),
+      sd_kV = round(sd(KVP..kV., na.rm = TRUE),0),
+      max_kV = round(max(KVP..kV., na.rm = TRUE),0),
+      min_kV = round(min(KVP..kV., na.rm = TRUE),0),
+      # stats for Pitch
+      mean_Pitch = round(mean(Pitch.factor, na.rm = TRUE),0),
+      med_Pitch = round(median(Pitch.factor, na.rm = TRUE),0),
+      sd_Pitch = round(sd(Pitch.factor, na.rm = TRUE),0),
+      max_Pitch = round(max(Pitch.factor, na.rm = TRUE),0),
+      min_Pitch = round(min(Pitch.factor, na.rm = TRUE),0),
+      # stats for acquisition (only spiral, smartprep & smartstep) number data
+      mean_Acq_Num = round(mean(Num..Series.Non.Localizer, na.rm = TRUE),0),
+      med_Acq_Num  = round(median(Num..Series.Non.Localizer, na.rm = TRUE),0),
+      sd_Acq_Num = round(sd(Num..Series.Non.Localizer, na.rm = TRUE),0),
+      max_Acq_Num = round(max(Num..Series.Non.Localizer, na.rm = TRUE),0),
+      min_Acq_Num = round(min(Num..Series.Non.Localizer, na.rm = TRUE),0),
+      # Exam number
+      Exam_number = n(),
+      # stats for BMI
+      mean_BMI = round(mean(BMI, na.rm = TRUE),0),
+      med_BMI = round(median(BMI, na.rm = TRUE),0),
+      sd_BMI = round(sd(BMI, na.rm = TRUE),0),
+      max_BMI = round(max(BMI, na.rm = TRUE),0),
+      min_BMI = round(min(BMI, na.rm = TRUE),0),
+    )
+  
+  write.xlsx(Local_DRL_study_description, paste0('output/',Study_year,'/Study_Description_Local_DRL_for_',scanner_name,'_in_',Study_year,'.xlsx'), sheetName = paste0("Local_DRL_",scanner_name),
+             colNames = TRUE, rowNames = FALSE, append = FALSE, overwrite = TRUE) #rowNames = FALSE to suppress the first column with index
+  
+  
+  # Retrieve the list of the 6 most frequent examination protocols then we filter on the dataframe
+  Frequent_protocols_list <- CT_dataframe %>%
+    group_by(Series.protocol.name) %>% count(Series.protocol.name) %>% # count the number of occurrences for the descriptions
+    arrange(desc(n)) %>% # data is sorted in descending order
+    head(6) %>% # select the first 6 lines (i.e. the 6 most frequent)
+    pull(Series.protocol.name) # a vector of study descriptions is created
+  CT_dataframe_protocol_filtered <- CT_dataframe %>% filter(Series.protocol.name %in% Frequent_protocols_list) # filter according to the list of frequent descriptions
+  
+  # get statistics (mean, sd, max, min) round at unit for 6 more frequent protocols
+  Local_DRL_protocols <- CT_dataframe_protocol_filtered %>%
+    group_by(Series.protocol.name) %>%
+    summarise(
+      # stats for Total DLP in mGy.cm
+      mean_Total_DLP_mGy.cm = round(mean(Total.DLP..mGy.cm., na.rm = TRUE),0),
+      med_Total_DLP_mGy.cm = round(median(Total.DLP..mGy.cm., na.rm = TRUE),0),
+      sd_Total_DLP_mGy.cm = round(sd(Total.DLP..mGy.cm., na.rm = TRUE),0),
+      max_Total_DLP_mGy.cm = round(max(Total.DLP..mGy.cm., na.rm = TRUE),0),
+      min_Total_DLP_mGy.cm = round(min(Total.DLP..mGy.cm., na.rm = TRUE),0),
+      # stats for max CTDIvol in mGy
+      mean_max_CTDIvol_mGy = round(mean(Max.CTDIvol..mGy., na.rm = TRUE),0),
+      med_max_CTDIvol_mGy = round(median(Max.CTDIvol..mGy., na.rm = TRUE),0),
+      sd_max_CTDIvol_mGy = round(sd(Max.CTDIvol..mGy., na.rm = TRUE),0),
+      max_max_CTDIvol_mGy = round(max(Max.CTDIvol..mGy., na.rm = TRUE),0),
+      min_max_CTDIvol_mGy = round(min(Max.CTDIvol..mGy., na.rm = TRUE),0),
+      # stats for kV
+      mean_kV = round(mean(KVP..kV., na.rm = TRUE),0),
+      med_kV = round(median(KVP..kV., na.rm = TRUE),0),
+      sd_kV = round(sd(KVP..kV., na.rm = TRUE),0),
+      max_kV = round(max(KVP..kV., na.rm = TRUE),0),
+      min_kV = round(min(KVP..kV., na.rm = TRUE),0),
+      # stats for Pitch
+      mean_Pitch = round(mean(Pitch.factor, na.rm = TRUE),0),
+      med_Pitch = round(median(Pitch.factor, na.rm = TRUE),0),
+      sd_Pitch = round(sd(Pitch.factor, na.rm = TRUE),0),
+      max_Pitch = round(max(Pitch.factor, na.rm = TRUE),0),
+      min_Pitch = round(min(Pitch.factor, na.rm = TRUE),0),
+      # stats for acquisition (only spiral, smartprep & smartstep) number data
+      mean_Acq_Num = round(mean(Num..Series.Non.Localizer, na.rm = TRUE),0),
+      med_Acq_Num  = round(median(Num..Series.Non.Localizer, na.rm = TRUE),0),
+      sd_Acq_Num = round(sd(Num..Series.Non.Localizer, na.rm = TRUE),0),
+      max_Acq_Num = round(max(Num..Series.Non.Localizer, na.rm = TRUE),0),
+      min_Acq_Num = round(min(Num..Series.Non.Localizer, na.rm = TRUE),0),
+      # Exam number
+      Exam_number = n(),
+      # stats for BMI
+      mean_BMI = round(mean(BMI, na.rm = TRUE),0),
+      med_BMI = round(median(BMI, na.rm = TRUE),0),
+      sd_BMI = round(sd(BMI, na.rm = TRUE),0),
+      max_BMI = round(max(BMI, na.rm = TRUE),0),
+      min_BMI = round(min(BMI, na.rm = TRUE),0),
+    )
+  
+  write.xlsx(Local_DRL_protocols, paste0('output/',Study_year,'/Protocols_Local_DRL_for_',scanner_name,'_in_',Study_year,'.xlsx'), sheetName = paste0("Local_DRL_",scanner_name),
+             colNames = TRUE, rowNames = FALSE, append = FALSE, overwrite = TRUE) #rowNames = FALSE to suppress the first column with index
+  
+  
+  rm(Local_DRL_protocols, Local_DRL_study_description)
+  j <- j+1 # to loop on CT units
 }
 
 
@@ -658,5 +717,3 @@ j <- j+1 # to loop on CT units
 # Create word document to list package citation
 #cite_packages(out.format = "docx", out.dir = file.path(paste0(root.dir,"/output/")))
 cite_packages(out.format = "docx")
-
-
