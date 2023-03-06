@@ -724,3 +724,6 @@ for (CT_dataframe in list_CT_model_data_dataframe_wo_duplicates) {
 # Create word document to list package citation
 #cite_packages(out.format = "docx", out.dir = file.path(paste0(root.dir,"/output/")))
 cite_packages(out.format = "docx")
+
+## ####################### TO-DO list #####################################
+
